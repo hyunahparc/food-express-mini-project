@@ -1,0 +1,16 @@
+{
+  "name": "food_express",
+  "version": "1.0.0",
+  "description": "supinfo mini project #1 using node.js and express.js",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hyunah Park",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
