@@ -21,7 +21,7 @@ const register = async (req, res) => {
         const savedUser = await user.save();
         // 비밀번호 제외 후 데이터 응답
         const { password: _, ...userData } = savedUser.toObject();
-        res.status(200).json({
+        res.status(201).json({
             message: "User registered successfully",
             user: userData,
         });
@@ -55,12 +55,58 @@ const login = async (req, res) => {
         );
         // 비밀번호 제외 후 데이터 응답
         const { password: _, ...userData } = user.toObject();
-        res.status(201).json({
+        res.status(200).json({
             message: "Login successful",
             user: userData,
             token,
         });
 
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// UPDATE (회원정보 수정)
+const update = async (req, res) => {
+    try {
+        const userId = req.user.id; // 토큰에서 가져온 본인 ID
+        const { username, password } = req.body;
+
+        // 사용자 조회
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        // 변경할 필드 적용
+        if (username) user.username = username;
+        if (password) user.password = password; // pre('save') 훅에서 자동 해시됨
+
+        // DB 저장 (pre-save 훅 자동 실행)
+        const savedUser = await user.save();
+
+        // 비밀번호 제외 후 응답
+        const { password: _, ...userData } = savedUser.toObject();
+        res.status(200).json({
+            message: "User information updated successfully",
+            user: userData,
+        });
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// DELETE (회원 탈퇴)
+// delete 예약어라 사용 불가
+const remove = async (req, res) => {
+    try {
+        const userId = req.user.id; // 토큰에서 가져온 본인 ID
+
+        const deletedUser = await User.findByIdAndDelete(userId);
+        if(!deletedUser) {
+            return res.status(404).json({ message: "User not found"});
+        }
+        
+        res.status(200).json({ message: "Account deleted successfully"});
     } catch(err) {
         res.status(500).json({ message: err.message });
     }
@@ -73,4 +119,6 @@ const login = async (req, res) => {
 module.exports = {
     register,
     login,
+    update,
+    remove,
 }
