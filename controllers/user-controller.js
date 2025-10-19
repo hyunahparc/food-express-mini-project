@@ -15,7 +15,7 @@ const register = async (req, res) => {
         }
         // 새로운 User 객체 만들기
         // (비밀번호 해싱은 user-model의 pre-save 훅에서 자동 처리)
-        const user = new User({ username: username, email: email, password: password });
+        const user = new User({ username: username, email: email, password: password, role: role });
         // DB에 저장
         // 여기서 Mongoose가 user-model.js에 등록된 pre('save') 미들웨어를 자동으로 실행
         const savedUser = await user.save();
@@ -49,7 +49,7 @@ const login = async (req, res) => {
 
         // JWT 생성
         const token = jwt.sign(
-            { id: user._id, email: user.email },
+            { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "24h"}
         );
