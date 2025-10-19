@@ -14,6 +14,9 @@ require("./config/db-config");
 // User
 const UserRouter = require("./routes/user-route");
 app.use("/users", UserRouter);
+// Restaurant
+const RestaurantRouter = require("./routes/restaurant-route");
+app.use("/restaurants", RestaurantRouter);
 
 
 
