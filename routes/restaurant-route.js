@@ -7,12 +7,12 @@ const adminOnly = require("../middlewares/admin");
 
 
 // PUBLIC (모든 사용자 조회 가능)
-// router.get("/", RestaurantController.getAllRestaurants);
+router.get("/", RestaurantController.getAll);
 
 // ADMIN만 레스토랑 등록, 수정, 삭제 가능
 router.post("/create", auth, adminOnly, RestaurantController.create);
-// router.put("/update/:id", auth, adminOnly, RestaurantController.update);
-// router.delete("/remove/:id", auth, adminOnly, RestaurantController.remove);
+router.put("/update/:id", auth, adminOnly, RestaurantController.update);
+router.delete("/remove/:id", auth, adminOnly, RestaurantController.remove);
 
 
 
