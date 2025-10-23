@@ -17,13 +17,16 @@ app.use("/users", UserRouter);
 // Restaurant
 const RestaurantRouter = require("./routes/restaurant-route");
 app.use("/restaurants", RestaurantRouter);
-
-
+// Menu
+const MenuRouter = require("./routes/menu-route");
+app.use("/menus", MenuRouter);
 
 
 const server = app.listen(8080, (err) => {
     console.log("Server running on http://localhost:8080");
 });
+
+
 
 module.exports = {
     app,

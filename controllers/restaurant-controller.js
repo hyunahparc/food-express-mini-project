@@ -73,19 +73,16 @@ const update = async (req, res) => {
     }
 };
 
-
-
-
 // DELETE (Admin만)
 const remove = async (req, res) => {
     try {
         const { id } = req.params;
         const deletedRestaurant = await Restaurant.findByIdAndDelete(id);
         if(!deletedRestaurant) {
-            return res.status(404).json({ message: "Reataurant not found"});
+            return res.status(404).json({ message: "Restaurant not found"});
         }
         
-        res.status(200).json({ message: "Reataurant deleted successfully"});
+        res.status(200).json({ message: "Restaurant deleted successfully"});
     } catch(err) {
         res.status(500).json({ message: err.message });
     }
