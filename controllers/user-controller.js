@@ -112,7 +112,9 @@ const remove = async (req, res) => {
     }
 };
 
-// GETALL (Admin only)
+/////////// ADMIN ONLY //////////
+
+// GETALL USER (Admin only)
 const getAll = async (req, res) => {
     try {
         const users = await User.find().select("-password");
@@ -126,6 +128,48 @@ const getAll = async (req, res) => {
     }
 };
 
+// UPDATE USER (Admin only) - username, role
+const updateUserByAdmin = async (req, res) => {
+    try {
+        const { id } = req.params; // 수정 대상 user id
+        const { username, role } = req.body;
+
+        const user = await User.findById(id);
+        if(!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if(username) user.username = username;
+        if(role) user.role = role;
+
+        // DB에 저장
+        const updatedUser = await user.save();
+        // 비밀번호 제외 후 데이터 응답
+        const { password: _, ...userData } = updatedUser.toObject();
+        res.status(200).json({
+            message: "User updated successfully (by admin)",
+            user: userData,
+        });
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// DELETE USER (Admin only)
+const deleteUserByAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        if(!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        await User.findByIdAndDelete(id);
+        res.status(200).json({ message: "User deleted successfully (by admin)" });
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 
 
 module.exports = {
@@ -134,4 +178,6 @@ module.exports = {
     update,
     remove,
     getAll,
+    updateUserByAdmin,
+    deleteUserByAdmin,
 }

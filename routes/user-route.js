@@ -9,12 +9,17 @@ const validate = require("../middlewares/validate");
 const { registerSchema, loginSchema, updateSchema } = require("../validations/userValidation");
 
 
+// PUBLIC
 router.post("/register", validate(registerSchema), UserController.register);
 router.post("/login", validate(loginSchema), UserController.login);
 // auth 미들웨어 추가 - 로그인해야 접근 가능
 router.put("/update", auth, validate(updateSchema), UserController.update);
 router.delete("/remove", auth, UserController.remove);
+
+// ADMIN ONLY
 router.get("/", auth, adminOnly, UserController.getAll);
+router.put("/update/:id", auth, adminOnly, UserController.updateUserByAdmin);
+router.delete("/remove/:id", auth, adminOnly, UserController.deleteUserByAdmin);
 
 
 
