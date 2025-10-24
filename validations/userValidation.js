@@ -37,8 +37,14 @@ const loginSchema = Joi.object({
 
 // 업데이트 검증 update validation
 const updateSchema = Joi.object({
-  username: Joi.string().min(3).max(20).optional(),
-  password: Joi.string().min(4).optional(),
+  username: Joi.string().min(3).max(20).optional().messages({
+    "string.base": "Username must be a string",
+    "string.min": "Username must be at least 3 characters long",
+    "string.max": "Username cannot exceed 20 characters",
+  }),
+  password: Joi.string().min(4).optional().messages({
+    "string.min": "Password must be at least 4 characters long",
+  }),
 });
 
 // 관리자용 유저 수정 (모든 필드 선택적)
