@@ -41,10 +41,23 @@ const updateSchema = Joi.object({
   password: Joi.string().min(4).optional(),
 });
 
+// 관리자용 유저 수정 (모든 필드 선택적)
+const adminUpdateSchema = Joi.object({
+  username: Joi.string().min(3).max(20).optional().messages({
+    "string.base": "Username must be a string",
+    "string.min": "Username must be at least 3 characters long",
+    "string.max": "Username cannot exceed 20 characters",
+  }),
+  role: Joi.string().valid("user", "admin").optional().messages({
+    "any.only": "Role must be either 'user' or 'admin'",
+  }),
+});
+
 
 
 module.exports = {
     registerSchema,
     loginSchema,
     updateSchema,
+    adminUpdateSchema,
 }

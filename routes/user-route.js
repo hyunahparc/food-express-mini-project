@@ -6,7 +6,7 @@ const auth = require("../middlewares/auth");
 const adminOnly = require("../middlewares/admin");
 // Joi
 const validate = require("../middlewares/validate");
-const { registerSchema, loginSchema, updateSchema } = require("../validations/userValidation");
+const { registerSchema, loginSchema, updateSchema, adminUpdateSchema } = require("../validations/userValidation");
 
 
 // PUBLIC
@@ -18,7 +18,7 @@ router.delete("/remove", auth, UserController.remove);
 
 // ADMIN ONLY
 router.get("/", auth, adminOnly, UserController.getAll);
-router.put("/update/:id", auth, adminOnly, UserController.updateUserByAdmin);
+router.put("/update/:id", auth, adminOnly, validate(adminUpdateSchema), UserController.updateUserByAdmin);
 router.delete("/remove/:id", auth, adminOnly, UserController.deleteUserByAdmin);
 
 
