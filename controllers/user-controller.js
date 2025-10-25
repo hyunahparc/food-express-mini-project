@@ -1,6 +1,5 @@
 // User 모델 가져오기
 const User = require("../models/user-model");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 
@@ -27,42 +26,6 @@ const register = async (req, res) => {
         });
     } catch(err) {
         res.status(400).json({ message: err.message });
-    }
-};
-
-// LOGIN (로그인)
-const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        // 이메일로 사용자 찾기
-        const user = await User.findOne({email: email});
-        if(!user) {
-            return res.status(400).json({ message: "Invalid email or password" });
-        }
-
-        // user-model의 comparePassword 메서드 사용
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(400).json({ message: "Invalid email or password" });
-        }
-
-        // JWT 생성
-        const token = jwt.sign(
-            { id: user._id, email: user.email, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "24h"}
-        );
-        // 비밀번호 제외 후 데이터 응답
-        const { password: _, ...userData } = user.toObject();
-        res.status(200).json({
-            message: "Login successful",
-            user: userData,
-            token,
-        });
-
-    } catch(err) {
-        res.status(500).json({ message: err.message });
     }
 };
 
@@ -174,7 +137,6 @@ const deleteUserByAdmin = async (req, res) => {
 
 module.exports = {
     register,
-    login,
     update,
     remove,
     getAll,

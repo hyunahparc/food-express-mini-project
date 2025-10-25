@@ -1,27 +1,28 @@
 // Import the express library
 const express = require("express");
+const passport = require("passport");
 // Initializing the app
 const app = express();
 
 // express.json()
 // : 요청 바디(request body)를 JSON으로 파싱하는 내장 미들웨어. 클라이언트가 보낸 JSON 데이터를 request.body로 바로 사용할 수 있게 만들어줌
 app.use(express.json());
+app.use(passport.initialize());
 
-// db-config 파일 불러오기
+// 환경 설정
 require("./config/db-config");
+require("./config/passport");
 
 // ROUTING 라우팅 설정
-// User
 const UserRouter = require("./routes/user-route");
-app.use("/users", UserRouter);
-// Restaurant
 const RestaurantRouter = require("./routes/restaurant-route");
-app.use("/restaurants", RestaurantRouter);
-// Menu
 const MenuRouter = require("./routes/menu-route");
+
+app.use("/users", UserRouter);
+app.use("/restaurants", RestaurantRouter);
 app.use("/menus", MenuRouter);
 
-
+// 서버 실행
 const server = app.listen(8080, (err) => {
     console.log("Server running on http://localhost:8080");
 });
