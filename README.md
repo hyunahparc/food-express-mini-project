@@ -102,6 +102,7 @@ Note: Test data created during Jest tests are automatically cleaned up using aft
 ---
 
 ## Folder Structure
+```
 project-root/
 ├─ config/
 ├─ controllers/
@@ -117,3 +118,4 @@ project-root/
 ├─ README.md
 ├─ server.js
 └─ swagger.yaml
+```
