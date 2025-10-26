@@ -1,8 +1,8 @@
-// Restaurant 모델 가져오기
+// Import the Restaurant model
 const Restaurant = require("../models/restaurant-model");
 
 
-// CREATE (Admin만)
+// CREATE (Admin only)
 const create = async (req, res) => {
     try {
         const { name, address, phone, opening_hours } = req.body;
@@ -15,26 +15,26 @@ const create = async (req, res) => {
 };
 
 // READ
-// GETALL (Public) - 모든 레스토랑 가져오기
-// sorting (정렬) 포함 - name, address 기준
-// pagination - limit 10
+// GET ALL (Public) - Retrieve all restaurants
+// Includes sorting by name or address
+// Pagination - limit 10
 const getAll = async (req, res) => {
     try {
-        const { sortBy, page = 1, limit = 10 } = req.query; // 디폴트로 1페이지, 10개씩 보여짐
-        let sortField = "name"; // 디폴트 정렬 : name
+        const { sortBy, page = 1, limit = 10 } = req.query; // Defaults to page 1, 10 items per page
+        let sortField = "name"; // Default sorting: name
         if(sortBy === "address") sortField = "address";
  
-        // 페이지네이션 계산
+        // Calculate pagination
         const skip = (page - 1) * limit;
 
-        // find() 후 sort() 적용 후 pagination 적용
+        // Apply find(), then sort(), then pagination
         const restaurants = await Restaurant.find()
-            .sort({ [ sortField]: 1 }) // 1 = 오름차순
-            .skip(skip) // 앞에 n개 건너뛰기
-            .limit(parseInt(limit)); // 문자열을 숫자로 변환
+            .sort({ [ sortField]: 1 }) // 1 = ascending order
+            .skip(skip) // Skip the first n items
+            .limit(parseInt(limit)); // Convert string to number
 
-        // 전체 개수 (페이지 수 계산용)
-        const total = await Restaurant.countDocuments(); // 전체 레스토랑 개수
+        // Total count (for calculating total pages)
+        const total = await Restaurant.countDocuments(); // Total number of restaurants
         const totalPages = Math.ceil(total / limit);
 
         res.status(200).json({
@@ -49,23 +49,23 @@ const getAll = async (req, res) => {
     }
 };
 
-// UPDATE (Admin만)
+// UPDATE (Admin only)
 const update = async (req, res) => {
     try {
         const { id } = req.params;
-        // 레스토랑 조회
+        // Find the restaurant
         const restaurant = await Restaurant.findById(id);
         if (!restaurant) {
             return res.status(404).json({ message: "Restaurant not found" });
         }
         const { name, address, phone, opening_hours } = req.body;
-        // 변경할 필드 적용
+        // Apply updated fields
         if (name) restaurant.name = name;
         if (address) restaurant.address = address;
         if (phone) restaurant.phone = phone;
         if (opening_hours) restaurant.opening_hours = opening_hours;
 
-        // DB 저장
+        // Save to the database
         const savedRestaurant = await restaurant.save();
         res.status(200).json({ message: "Restaurant updated", restaurant: savedRestaurant });
     } catch(err) {
@@ -73,7 +73,7 @@ const update = async (req, res) => {
     }
 };
 
-// DELETE (Admin만)
+// DELETE (Admin only)
 const remove = async (req, res) => {
     try {
         const { id } = req.params;

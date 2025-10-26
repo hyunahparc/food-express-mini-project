@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// 스키마 만들기
 const menuSchema = new mongoose.Schema({
     restaurant_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -25,10 +24,10 @@ const menuSchema = new mongoose.Schema({
         required: true,
     }
 }, {
-  timestamps: true, // createdAt, updatedAt 자동 생성
+  timestamps: true,
 });
 
-// Menu라는 테이블과 연결
+
 const Menu = mongoose.model("Menu", menuSchema);
 
 

@@ -23,7 +23,7 @@ describe("RESTAURANT API", () => {
     let createdRestaurantId;
 
     beforeAll(async () => {
-        // 관리자 계정 생성 및 로그인
+        // Create admin account and login
         await supertest(app).post("/users/register").send(adminUser);
         const loginRes = await supertest(app)
         .post("/users/login")

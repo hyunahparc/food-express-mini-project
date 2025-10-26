@@ -1,8 +1,8 @@
-// Menu 모델 가져오기
+// Import the Menu model
 const Menu = require("../models/menu-model");
 
 
-// CREATE (Admin만)
+// CREATE (Admin only)
 const create = async (req, res) => {
     try {
         const { restaurant_id, name, description, price, category } = req.body;
@@ -15,16 +15,16 @@ const create = async (req, res) => {
 };
 
 // READ
-// GETALL (Public) - 모든 메뉴 가져오기
-// sorting (정렬) 포함 - price, category 기준
-// pagination - limit 10
+// GET ALL (Public) - Retrieve all restaurants
+// Includes sorting by category or price
+// Pagination - limit 10
 const getAll = async (req, res) => {
     try {
-        const { sortBy, page = 1, limit = 10 } = req.query; // 디폴트로 1페이지, 10개씩 보여짐
-        let sortField = "category"; // 디폴트 정렬 : category
+        const { sortBy, page = 1, limit = 10 } = req.query;
+        let sortField = "category"; // Default sorting: category
         if(sortBy === "price") sortField = "price";      
         
-        // 페이지네이션 계산
+        // Calculate pagination
         const skip = (page - 1) * limit;
         
         const menus = await Menu.find()
@@ -47,24 +47,24 @@ const getAll = async (req, res) => {
     }
 };
 
-// UPDATE (Admin만)
+// UPDATE (Admin only)
 const update = async (req, res) => {
     try {
         const { id } = req.params;
-        // 메뉴 조회
+        // Find the menu
         const menu = await Menu.findById(id);
         if (!menu) {
             return res.status(404).json({ message: "Menu not found" });
         }
         const { restaurant_id, name, description, price, category } = req.body;
-        // 변경할 필드 적용
+        // Apply updated fields
         if (restaurant_id) menu.restaurant_id = restaurant_id;
         if (name) menu.name = name;
         if (description) menu.description = description;
         if (price) menu.price = price;
         if (category) menu.category = category;
 
-        // DB 저장
+        // Save to the database
         const savedMenu = await menu.save();
         res.status(200).json({ message: "Menu updated", menu: savedMenu });
     } catch(err) {
@@ -72,7 +72,7 @@ const update = async (req, res) => {
     }
 };
 
-// DELETE (Admin만)
+// DELETE (Admin only)
 const remove = async (req, res) => {
     try {
         const { id } = req.params;

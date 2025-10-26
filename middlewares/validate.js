@@ -1,4 +1,4 @@
-// Validation 검증 미들웨어
+// Validation middleware
 
 const validate = (schema) => (req, res, next) => {
     const { error } = schema.validate(req.body, { abortEarly: false}); // 모든 오류 표시

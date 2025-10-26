@@ -3,16 +3,16 @@ const supertest = require("supertest");
 const mongoose = require("mongoose");
 const User = require("../models/user-model");
 
-// 로그인 후 저장할 JWT
+// Save JWT token after login
 let token;
 
 // close server after all tests
 afterAll(async () => {
-    // 테스트용 유저 삭제 (예: @example.com 이메일)
+    // Delete test users (e.g., emails ending with @example.com)
     await User.deleteMany({ email: /@example\.com$/ });
-    // DB 연결 종료
+    // Close the database connection
     await mongoose.connection.close();
-    // 서버 종료
+    // Stop the server
     server.close();
 });
 
@@ -24,9 +24,9 @@ describe("USER API", () => {
         role: "user",
     };   
 
-    // USER REGISTER 회원가입
+    // USER REGISTER
     it("should register a new user successfully", async () => {
-        // 슈퍼테스트야 내 앱 실행시켜서 /users/register 해라
+        // Supertest run the app and call /users/register
         const res = await supertest(app)
             .post("/users/register")
             .send(userData);
@@ -36,7 +36,7 @@ describe("USER API", () => {
         expect(res.body.user).toHaveProperty("_id");
     });
 
-    // USER LOGIN + SAVE JWT 로그인
+    // USER LOGIN + SAVE JWT
     it("should login the user and return JWT token", async () => {
         const res = await supertest(app)
         .post("/users/login")
@@ -47,7 +47,7 @@ describe("USER API", () => {
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty("token");
-        token = res.body.token; // 토큰 저장
+        token = res.body.token; // Save the token
     });
 
     // USER UPDATE WITH JWT TOKEN

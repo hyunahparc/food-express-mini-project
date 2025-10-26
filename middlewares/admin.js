@@ -1,4 +1,4 @@
-// Admin 검증 미들웨어
+// Admin verification middleware
 
 const adminOnly = (req, res, next) => {
   if (!req.user) {

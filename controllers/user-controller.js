@@ -1,24 +1,24 @@
-// User 모델 가져오기
+// Import the User model
 const User = require("../models/user-model");
 const jwt = require("jsonwebtoken");
 
 
-// REGISTER (회원가입)
+// REGISTER
 const register = async (req, res) => {
     try {
         const { username, email, password, role } = req.body;
-        // 이메일 중복 확인
+        // Check for duplicate email
         const existingEmail = await User.findOne({ email: email });
         if(existingEmail) {
             return res.status(400).json({message: "Email already exists"});
         }
-        // 새로운 User 객체 만들기
-        // (비밀번호 해싱은 user-model의 pre-save 훅에서 자동 처리)
+        // Create a new User object
+        // (Password hashing is automatically handled by the pre-save hook in user-model)
         const user = new User({ username: username, email: email, password: password, role: role });
-        // DB에 저장
-        // 여기서 Mongoose가 user-model.js에 등록된 pre('save') 미들웨어를 자동으로 실행
+        // Save to the database
+        // Mongoose automatically runs the pre('save') middleware defined in user-model.js
         const savedUser = await user.save();
-        // 비밀번호 제외 후 데이터 응답
+        // Respond with user data excluding the password
         const { password: _, ...userData } = savedUser.toObject();
         res.status(201).json({
             message: "User registered successfully",
@@ -29,25 +29,25 @@ const register = async (req, res) => {
     }
 };
 
-// UPDATE (회원정보 수정)
+// UPDATE
 const update = async (req, res) => {
     try {
-        const userId = req.user.id; // 토큰에서 가져온 본인 ID
+        const userId = req.user.id; // Get own ID from the token
         const { username, password } = req.body;
 
-        // 사용자 조회
+        // Find the user
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        // 변경할 필드 적용
+        // Apply updated fields
         if (username) user.username = username;
-        if (password) user.password = password; // pre('save') 훅에서 자동 해시됨
+        if (password) user.password = password; /// Automatically hashed by pre('save') hook
 
-        // DB 저장 (pre-save 훅 자동 실행)
+        // Save to the database (pre-save hook runs automatically)
         const savedUser = await user.save();
 
-        // 비밀번호 제외 후 응답
+        // Respond with user data excluding the password
         const { password: _, ...userData } = savedUser.toObject();
         res.status(200).json({
             message: "User information updated successfully",
@@ -58,11 +58,10 @@ const update = async (req, res) => {
     }
 };
 
-// DELETE (회원 탈퇴)
-// delete 예약어라 사용 불가
+// DELETE
 const remove = async (req, res) => {
     try {
-        const userId = req.user.id; // 토큰에서 가져온 본인 ID
+        const userId = req.user.id; // Get own ID from the token
 
         const deletedUser = await User.findByIdAndDelete(userId);
         if(!deletedUser) {
@@ -94,7 +93,7 @@ const getAll = async (req, res) => {
 // UPDATE USER (Admin only) - username, role
 const updateUserByAdmin = async (req, res) => {
     try {
-        const { id } = req.params; // 수정 대상 user id
+        const { id } = req.params; // ID of the user to be updated
         const { username, role } = req.body;
 
         const user = await User.findById(id);
@@ -105,9 +104,9 @@ const updateUserByAdmin = async (req, res) => {
         if(username) user.username = username;
         if(role) user.role = role;
 
-        // DB에 저장
+        // Save to the database
         const updatedUser = await user.save();
-        // 비밀번호 제외 후 데이터 응답
+        // Respond with user data excluding the password
         const { password: _, ...userData } = updatedUser.toObject();
         res.status(200).json({
             message: "User updated successfully (by admin)",

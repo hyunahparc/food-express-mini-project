@@ -7,7 +7,7 @@ passport.use(
         { usernameField: "email", passwordField: "password" },
         async (email, password, done) => {
             try {
-                // 이메일로 사용자 찾기
+                // Find the user by email
                 const user = await User.findOne({ email: email });
                 if(!user) {
                     return done(null, false, { message: "Incorrect email" });
@@ -16,8 +16,8 @@ passport.use(
                 if(!isMatch) {
                     return done(null, false, { message: "Incorrect password" });
                 }
-                //인증 성공
-                return done(null, user); // user 객체를 req.user에 넣어줌
+                // Authentication successful
+                return done(null, user); // Attach the user object to req.user
             } catch(err) {
                 return done(err);
             }

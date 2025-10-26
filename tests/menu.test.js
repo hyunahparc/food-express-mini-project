@@ -24,14 +24,14 @@ describe("MENU API", () => {
     };
 
     beforeAll(async () => {
-        // 관리자 생성 및 로그인
+        // Create admin account and login
         await supertest(app).post("/users/register").send(adminUser);
         const loginRes = await supertest(app)
         .post("/users/login")
         .send({ email: adminUser.email, password: adminUser.password });
         token = loginRes.body.token;
 
-        // 레스토랑 먼저 생성 (menu는 restaurant_id 필요)
+        // Create the restaurant first (menu requires restaurant_id)
         const restRes = await supertest(app)
         .post("/restaurants/create")
         .set("Authorization", `Bearer ${token}`)

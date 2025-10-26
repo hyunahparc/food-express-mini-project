@@ -1,9 +1,9 @@
-// register, login JOI 스키마 정의
+// Joi schema validation for register and login
 
 const Joi = require("joi");
 
 
-// 회원가입 검증 register validation
+// Register validation
 const registerSchema = Joi.object({
   username: Joi.string().min(3).max(20).required().messages({
     "string.base": "Username must be a string",
@@ -21,10 +21,10 @@ const registerSchema = Joi.object({
   role: Joi.string().valid("user", "admin").required().messages({
     "any.only": "Role must be either 'user' or 'admin'",
     "any.required": "Role is required",
-  }), // model에서 default 주면 .required() 없애고 .optional() 쓰면 됨
+  }), // If there is a default role in model, you can remove .required() and use .optional()
 });
 
-// 로그인 검증 login validation
+// Login validation
 const loginSchema = Joi.object({
   email: Joi.string().email().required().messages({
     "string.email": "Please provide a valid email address",
@@ -35,7 +35,7 @@ const loginSchema = Joi.object({
   }),
 });
 
-// 업데이트 검증 update validation
+// Update validation
 const updateSchema = Joi.object({
   username: Joi.string().min(3).max(20).optional().messages({
     "string.base": "Username must be a string",
@@ -47,7 +47,7 @@ const updateSchema = Joi.object({
   }),
 });
 
-// 관리자용 유저 수정 (모든 필드 선택적)
+// Admin-only user update (all fields are optional)
 const adminUpdateSchema = Joi.object({
   username: Joi.string().min(3).max(20).optional().messages({
     "string.base": "Username must be a string",

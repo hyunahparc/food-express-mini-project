@@ -1,10 +1,10 @@
-// .env 파일 사용하기 위해 필요
+// Required to use the .env file
 require("dotenv").config();
 
-// mongoose 불러오기
+// Import mongoose
 const mongoose = require("mongoose");
 
-// DB 연결 설정
+// Database connection configuration
 const DB_URL = process.env.DB_URL + "/food_express";
 mongoose.connect(DB_URL);
 const db = mongoose.connection;

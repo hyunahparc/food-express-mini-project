@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
-// hashed password : bcrypt 사용하기
+// hashed password : use bcrypt
 const bcrypt = require("bcrypt");
 
 
-// 스키마 만들기
 const userSchema = new mongoose.Schema({
     username: {
         type: String, 
@@ -25,33 +24,32 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// 비밀번호 해시 처리 (DB 저장 전에 실행됨)
-// “User를 저장하기 전에 비밀번호를 해시로 변환해라.”
-// 이 부분 나중에 미들웨어로 따로 빼도 됨
+// Handle password hashing (runs before saving to DB)
+// "Convert the user's password to a hash before saving."
+// This part could be moved to a separate middleware later
 userSchema.pre("save", async function(next) {
-    // 비밀번호가 변경되지 않았다면 넘어가기 (update 시 중복 암호화 방지)
+    // Skip if password hasn't been modified (prevents double hashing on update)
     if(!this.isModified("password")) return next();
 
     try {
-        // salt(랜덤 문자열) 생성 - 복잡도 10
+        // Generate salt (random string) with complexity 10
         const salt = await bcrypt.genSalt(10);
-        // 비밀번호를 salt와 함께 해시
+        // Hash the password with the salt
         this.password = await bcrypt.hash(this.password, salt);
-        // 다음 단계로 이동 (해시된 비밀번호를 실제로 저장함)
+        // Proceed to next step (actually save the hashed password)
         next();
     } catch(err) {
-        // 에러 발생 시 mongoose에 에러 전달
         next(err);
     }
 });
 
-// 비밀번호 검증 메서드 (로그인 시)
+// Password verification method (used during login)
 userSchema.methods.comparePassword = async function(inputPassword) {
     return await bcrypt.compare(inputPassword, this.password);
 };
 
 
-// User 모델 생성 후 테이블과 연결
+// Create the User model and connect it to the collection
 const User = mongoose.model("User", userSchema);
 
 
